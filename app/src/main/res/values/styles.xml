@@ -1,0 +1,26 @@
+<resources>
+
+    <style name="Widget.GemBrowser.Button.IconOnly" parent="Widget.MaterialComponents.Button">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:tint">?attr/colorOnBackground</item>
+    </style>
+
+    <style name="Widget.GemBrowser.EditText.UriBar" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_uri_edittext</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+</resources>

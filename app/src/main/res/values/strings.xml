@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Gem Browser</string>
+    <string name="intent_label">Open Gemini Capsule</string>
+</resources>
