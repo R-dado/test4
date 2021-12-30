@@ -14,7 +14,7 @@ The Gemini protocol feature-rich* browser for Android.
   - Displaying `pre` tags in monospace and with horizontal scrolling
 - Rendering any other text as plain text
 - Navigating back in history
-- Homepage (hardcoded `https://gemini.circumlunar.space/`)
+- Homepage (hardcoded `gemini://gemini.circumlunar.space/`)
 - Opening `gemini://` links from other apps
 - Opening not `gemini://` links in other apps
 - Showing links URI on long-click
