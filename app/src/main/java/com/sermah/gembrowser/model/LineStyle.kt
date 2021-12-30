@@ -9,13 +9,14 @@ data class LineStyle (
     var padBottom   : Float     = 0f,  // Dp
     var padStart    : Float     = 16f, // Dp
     var padEnd      : Float     = 16f, // Dp
-    var lineSpacing  : Float    = 0f, // Sp
+    var lineSpacing : Float     = 0f, // Sp
     var color       : TextColor = TextColor(),
     var style       : TextStyle = TextStyle.NORMAL, // normal, bold, italic, bold_italic
     var align       : Alignment = Alignment.START,
     var typeface    : Typeface? = null,
     var prefix      : String    = "",
     var postfix     : String    = "",
+    var nowrap      : Boolean   = false
     ) {
 
     enum class Alignment {

@@ -15,9 +15,8 @@ object ContentManager {
     var pagesHistory: MutableList<ContentPage> = mutableListOf()
 
     fun requestUri(uri: Uri, saveCurrentInHistory: Boolean = true) {
-        if (uri.scheme != "gemini") return
-
-        GeminiClient.connectAndRetrieve(
+        if (uri.scheme != "gemini") onNonGeminiScheme(uri)
+        else GeminiClient.connectAndRetrieve(
             uri = uri,
             onSuccess = fun(header, body) {
                 val meta = header.substring(3)

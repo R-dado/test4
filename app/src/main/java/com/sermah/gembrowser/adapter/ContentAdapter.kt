@@ -47,8 +47,11 @@ class ContentAdapter(
         lineView.unlink()
         when (line.type) {
             ContentLine.ContentType.LINK -> {
-                lineView.link(Uri.parse(line.extra))
-                style = StyleManager.styleLink
+                val uri = Uri.parse(line.extra)
+                lineView.link(uri)
+                style =
+                    if (uri.scheme == "gemini") StyleManager.styleLink
+                    else StyleManager.styleExtLink
             }
             ContentLine.ContentType.PRE -> {
                 text = line.data // not trimmed
@@ -76,6 +79,7 @@ class ContentAdapter(
             }
         }
         // Apply style before setting text, because pre-/postfixes are put in setText
+        lineView.lineType = line.type
         lineView.applyStyle(style)
         lineView.setRawText(text)
     }

@@ -1,24 +1,54 @@
 package com.sermah.gembrowser.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import com.sermah.gembrowser.data.ContentManager
 import com.sermah.gembrowser.data.StyleManager
 import com.sermah.gembrowser.data.StyleManager.dpToPx
+import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.model.LineStyle
 
 class LineView: AppCompatTextView {
     var data: String = ""
+    var lineType: ContentLine.ContentType = ContentLine.ContentType.TEXT
     private var rawText: String = ""
     private var prefix: String = ""
     private var postfix: String = ""
+
+    var horizontalScroll: Boolean = false
+    set(b: Boolean) {
+        if (b) enableHorizontalScroll()
+        else disableHorizontalScroll()
+        field = b
+    }
+    
+    init {
+        setOnTouchListener { _, event ->
+            if (lineType == ContentLine.ContentType.LINK)
+            this.alpha =  when(event.action) {
+                MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE,
+                MotionEvent.ACTION_HOVER_ENTER, MotionEvent.ACTION_HOVER_MOVE -> 0.7f
+                else -> 1.0f
+            }
+            if (horizontalScroll) {
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
+            super.onTouchEvent(event)
+        }
+    }
 
     // Raw text is needed, because if pre/postfix concat is in setText,
     // then TextView may occasionally wrap its text into another pair of pre/postfixes
@@ -29,6 +59,7 @@ class LineView: AppCompatTextView {
     }
 
     fun link(uri: Uri){
+        
         setOnClickListener {
             ContentManager.requestUri(uri)
         }
@@ -39,7 +70,9 @@ class LineView: AppCompatTextView {
 
         setTextIsSelectable(false)
         isClickable = true
-        paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        isLongClickable = true
+        isFocusable = true
+        //paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
     }
 
     fun unlink() {
@@ -47,7 +80,19 @@ class LineView: AppCompatTextView {
         setOnLongClickListener(null)
         setTextIsSelectable(true)
         isClickable = false
-        paintFlags = paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+        isLongClickable = false
+        isFocusable = true
+        //paintFlags = paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+    }
+
+    fun enableHorizontalScroll() {
+        setHorizontallyScrolling(true)
+        isHorizontalFadingEdgeEnabled = true
+    }
+
+    fun disableHorizontalScroll() {
+        setHorizontallyScrolling(false)
+        isHorizontalFadingEdgeEnabled = false
     }
 
     fun applyStyle(style: LineStyle) {
@@ -77,6 +122,7 @@ class LineView: AppCompatTextView {
             dpToPx(this.context, style.padBottom),
         )
         setLineSpacing(dpToPx(this.context, style.lineSpacing).toFloat(), 1f)
+        horizontalScroll = style.nowrap && lineType != ContentLine.ContentType.LINK
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)

@@ -39,7 +39,15 @@ object StyleManager {
         color   = LineStyle.TextColor(
             light   = Color.rgb(0x00, 0x77, 0xff),
             dark    = Color.rgb(0x22, 0x99, 0xff)),
-        prefix  = "[↗] ",
+        prefix  = "🔗 ",
+    )
+    val styleExtLink = LineStyle (
+        padTop = 4f,
+        padBottom = 4f,
+        color   = LineStyle.TextColor(
+            light   = Color.rgb(0x00, 0x77, 0xff),
+            dark    = Color.rgb(0x22, 0x99, 0xff)),
+        prefix  = "📡 ",
     )
     val styleQuote = LineStyle (
         //prefix = "> ",
@@ -61,9 +69,10 @@ object StyleManager {
     val stylePre = LineStyle (
         size = 14f,
         lineSpacing = 0f,
-        padEnd = 4f,
+        padBottom = 4f,
         padTop = 4f,
-        typeface = Typeface.MONOSPACE
+        typeface = Typeface.MONOSPACE,
+        nowrap = true
     )
 
     fun dpToPx(ctx: Context, dp: Float): Int {

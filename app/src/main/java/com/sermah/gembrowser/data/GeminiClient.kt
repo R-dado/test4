@@ -22,7 +22,7 @@ import javax.net.ssl.X509TrustManager
 
 
 object GeminiClient {
-    lateinit var socketFactory: SocketFactory
+    var socketFactory: SocketFactory
 
     init {
         // Create SocketFactory that allows self-signed certificates (disables certificate validation O_o)

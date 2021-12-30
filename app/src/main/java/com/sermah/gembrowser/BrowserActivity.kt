@@ -19,12 +19,13 @@ import com.sermah.gembrowser.databinding.ActivityBrowserBinding
 import android.view.animation.TranslateAnimation
 import android.content.DialogInterface
 
-import android.R.id.input
 import android.app.AlertDialog
 import android.content.Intent
 
-import android.text.Editable
 import android.text.InputType
+import android.util.Log
+import android.view.ViewGroup
+import com.sermah.gembrowser.data.StyleManager.dpToPx
 
 class BrowserActivity : AppCompatActivity() {
 
@@ -62,7 +63,7 @@ class BrowserActivity : AppCompatActivity() {
             onPermanent     = ::tempHandleNonSuccess,
             onCertificate   = ::tempHandleNonSuccess,
         )
-        ContentManager.onNonGeminiScheme = ::handleNonGeminiScheme
+        ContentManager.onNonGeminiScheme = fun (uri: Uri) {handleNonGeminiScheme(uri)}
 
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles
@@ -126,6 +127,7 @@ class BrowserActivity : AppCompatActivity() {
         // Probably in future someone (me) will want to do scheme-specific stuff
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = uri
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(intent)
     }
 
@@ -183,16 +185,22 @@ class BrowserActivity : AppCompatActivity() {
     }
 
     fun handleInput(title: String = "", toUri: Uri, sensitive: Boolean = false) { // TODO: Remove all hardcoded strings
-        val input = EditText(this)
-        if (sensitive) input.inputType =
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-        AlertDialog.Builder(this)
-            .setTitle(if (title.isNotBlank()) title else "Input Prompt")
-            .setView(input)
-            .setPositiveButton("Send") { _, _ ->
-                ContentManager.requestUri(Uri.parse(toUri.toString() + "?" + Uri.encode(input.text.toString())))
-            }
-            .setNegativeButton("Cancel") { _, _ -> }
-            .show()
+        runOnUiThread {
+            val layout = layoutInflater.inflate(R.layout.dialog_input, null)
+            layout.findViewById<TextView>(R.id.dialog_input_server_name).text =
+                getString(R.string.dialog_input_server_name, toUri.host)
+            val input = layout.findViewById<EditText>(R.id.dialog_input_field)
+            if (sensitive) input.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            AlertDialog.Builder(this)
+                .setTitle(if (title.isNotBlank()) title else getString(R.string.dialog_input_title))
+                .setView(layout)
+                .setPositiveButton(getString(R.string.dialog_input_submit)) { _, _ ->
+                    ContentManager.requestUri(Uri.parse(toUri.toString() + "?" + Uri.encode(input.text.toString())))
+                }
+                .setNegativeButton(getString(R.string.general_cancel)) { _, _ -> }
+                .show()
+            Log.d("BrowserActivity", "Handling Input")
+        }
     }
 }
