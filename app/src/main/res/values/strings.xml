@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gem Browser</string>
+    <string name="app_name">Gemini Spacewalk</string>
     <string name="intent_label">Open Gemini Capsule</string>
     <string name="dialog_input_hint">Enter text…</string>
     <string name="dialog_input_server_name">%s asks for your input</string>

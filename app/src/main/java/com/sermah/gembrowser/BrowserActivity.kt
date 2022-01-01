@@ -17,15 +17,21 @@ import com.sermah.gembrowser.data.FontManager
 import com.sermah.gembrowser.data.StyleManager
 import com.sermah.gembrowser.databinding.ActivityBrowserBinding
 import android.view.animation.TranslateAnimation
-import android.content.DialogInterface
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Build
 
 import android.text.InputType
 import android.util.Log
-import android.view.ViewGroup
-import com.sermah.gembrowser.data.StyleManager.dpToPx
+import android.view.WindowManager
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+
+
+
 
 class BrowserActivity : AppCompatActivity() {
 
@@ -45,6 +51,12 @@ class BrowserActivity : AppCompatActivity() {
         binding.root.isFocusableInTouchMode = true
         setContentView(binding.root)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_NO) {
+            window.decorView.systemUiVisibility = FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or
+                    SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR or SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
         ContentManager.contentUpdateHandler = ContentManager.ContentUpdateHandler (
             onSuccess = fun(_, lines) {
                 runOnUiThread {
@@ -59,9 +71,9 @@ class BrowserActivity : AppCompatActivity() {
             onRedirect      = fun(_, toUri, _) {
                 ContentManager.requestUri(Uri.parse(toUri))
             },
-            onTemporary     = ::tempHandleNonSuccess,
-            onPermanent     = ::tempHandleNonSuccess,
-            onCertificate   = ::tempHandleNonSuccess,
+            onTemporary     = tempHandleNonSuccess,
+            onPermanent     = tempHandleNonSuccess,
+            onCertificate   = tempHandleNonSuccess,
         )
         ContentManager.onNonGeminiScheme = fun (uri: Uri) {handleNonGeminiScheme(uri)}
 
@@ -84,7 +96,7 @@ class BrowserActivity : AppCompatActivity() {
         homeButton.setOnClickListener{ ContentManager.requestUri(Uri.parse(homepage)) }
 
         uriField.setOnKeyListener (
-            fun(v: View, k: Int, e: KeyEvent): Boolean {
+            fun(_: View, k: Int, e: KeyEvent): Boolean {
                 if((e.action == KeyEvent.ACTION_DOWN) && (k == KeyEvent.KEYCODE_ENTER)) {
                     if(uriField.text.isNotBlank()) Uri.parse(
                         uriField.text.toString().trim()
@@ -131,7 +143,7 @@ class BrowserActivity : AppCompatActivity() {
         applicationContext.startActivity(intent)
     }
 
-    fun tempHandleNonSuccess(code: String, meta: String, uri: Uri) { // TODO: Replace
+    val tempHandleNonSuccess = fun(code: String, meta: String, uri: Uri) { // TODO: Replace
         Thread {
             run {
                 showInfoBar("Error code: $code", meta)

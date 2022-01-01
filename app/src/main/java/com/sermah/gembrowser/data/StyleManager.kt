@@ -3,12 +3,16 @@ package com.sermah.gembrowser.data
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import com.sermah.gembrowser.model.LineStyle
+import com.sermah.gembrowser.model.style.AppStyle
+import com.sermah.gembrowser.model.style.DayNightColor
+import com.sermah.gembrowser.model.style.LineStyle
 
 // Singleton
 object StyleManager {
 
     var isDark = false
+
+    var appStyle = AppStyle ()
 
     val styleText = LineStyle ()
     val styleH1 = LineStyle (
@@ -36,7 +40,7 @@ object StyleManager {
     val styleLink = LineStyle (
         padTop = 4f,
         padBottom = 4f,
-        color   = LineStyle.TextColor(
+        color   = DayNightColor(
             light   = Color.rgb(0x00, 0x77, 0xff),
             dark    = Color.rgb(0x22, 0x99, 0xff)),
         prefix  = "🔗 ",
@@ -44,7 +48,7 @@ object StyleManager {
     val styleExtLink = LineStyle (
         padTop = 4f,
         padBottom = 4f,
-        color   = LineStyle.TextColor(
+        color   = DayNightColor(
             light   = Color.rgb(0x00, 0x77, 0xff),
             dark    = Color.rgb(0x22, 0x99, 0xff)),
         prefix  = "📡 ",

@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.model
+package com.sermah.gembrowser.model.style
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -10,7 +10,10 @@ data class LineStyle (
     var padStart    : Float     = 16f, // Dp
     var padEnd      : Float     = 16f, // Dp
     var lineSpacing : Float     = 0f, // Sp
-    var color       : TextColor = TextColor(),
+    var color       : DayNightColor = DayNightColor(
+        light = Color.BLACK,
+        dark = Color.WHITE
+    ),
     var style       : TextStyle = TextStyle.NORMAL, // normal, bold, italic, bold_italic
     var align       : Alignment = Alignment.START,
     var typeface    : Typeface? = null,
@@ -25,9 +28,4 @@ data class LineStyle (
     enum class TextStyle {
         NORMAL, BOLD, ITALIC, BOLD_ITALIC
     }
-
-    class TextColor (
-        val light: Int = Color.BLACK,
-        val dark: Int = Color.WHITE
-    )
 }

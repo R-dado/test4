@@ -1,25 +1,18 @@
 package com.sermah.gembrowser.view
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.Typeface
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import com.sermah.gembrowser.data.ContentManager
 import com.sermah.gembrowser.data.StyleManager
 import com.sermah.gembrowser.data.StyleManager.dpToPx
 import com.sermah.gembrowser.model.ContentLine
-import com.sermah.gembrowser.model.LineStyle
+import com.sermah.gembrowser.model.style.LineStyle
 
 class LineView: AppCompatTextView {
     var data: String = ""
