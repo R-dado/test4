@@ -24,13 +24,13 @@ import android.os.Build
 
 import android.text.InputType
 import android.util.Log
-import android.view.WindowManager
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
-
-
+import android.widget.HorizontalScrollView
+import com.google.android.material.button.MaterialButton
+import com.sermah.gembrowser.data.StyleManager.dpToPx
 
 
 class BrowserActivity : AppCompatActivity() {
@@ -61,6 +61,7 @@ class BrowserActivity : AppCompatActivity() {
             onSuccess = fun(_, lines) {
                 runOnUiThread {
                     contentRV.adapter = ContentAdapter(this, lines)
+                    assembleUriButtons(ContentManager.currentPage.uri)
                     uriField.setText(ContentManager.currentPage.uri.toString())
                     uriField.clearFocus()
                 }
@@ -86,6 +87,9 @@ class BrowserActivity : AppCompatActivity() {
         uriField = binding.uriField
         infoBar = binding.informationBar
         contentRV = binding.contentRecyclerView
+        binding.uriSegmentsContainer.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            (binding.uriSegmentsContainer.parent as HorizontalScrollView).fullScroll(View.FOCUS_RIGHT)
+        }
 
         infoBar.visibility = View.INVISIBLE
         infoBar.isFocusableInTouchMode = true
@@ -204,7 +208,7 @@ class BrowserActivity : AppCompatActivity() {
             val input = layout.findViewById<EditText>(R.id.dialog_input_field)
             if (sensitive) input.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            AlertDialog.Builder(this)
+            AlertDialog.Builder(this, R.style.Theme_GemBrowser_AlertDialog)
                 .setTitle(if (title.isNotBlank()) title else getString(R.string.dialog_input_title))
                 .setView(layout)
                 .setPositiveButton(getString(R.string.dialog_input_submit)) { _, _ ->
@@ -213,6 +217,48 @@ class BrowserActivity : AppCompatActivity() {
                 .setNegativeButton(getString(R.string.general_cancel)) { _, _ -> }
                 .show()
             Log.d("BrowserActivity", "Handling Input")
+        }
+    }
+
+    // TODO: Rework Uri building in other classes
+    fun assembleUriButtons(uri: Uri) {
+        val current =  binding.uriCurrent
+        val segmentsContainer = binding.uriSegmentsContainer
+        segmentsContainer.removeAllViews()
+        val newUri = uri.buildUpon().path("").query("")
+        if (uri.pathSegments.size > 0){
+            current.text = uri.lastPathSegment
+            current.setPadding(current.paddingLeft, current.paddingTop, current.paddingRight, 0)
+            val btnUriFirst = newUri.build()
+
+            val btnLayoutFirst = layoutInflater.inflate(R.layout.button_uri_segment, null)
+            val btnFirst = btnLayoutFirst.findViewById<MaterialButton>(R.id.uri_segment)
+            btnFirst.text = uri.host
+            if (uri.pathSegments.size == 1) btnFirst.icon = null
+            btnFirst.setOnClickListener { ContentManager.requestUri(btnUriFirst) }
+
+            segmentsContainer.addView(btnLayoutFirst)
+
+            uri.pathSegments.forEachIndexed{
+                    i: Int, s: String ->
+
+                if (i < uri.pathSegments.size - 1) {
+                    newUri.appendPath(s)
+                    val btnUri = newUri.build()
+
+                    val btnLayout = layoutInflater.inflate(R.layout.button_uri_segment, null)
+                    val btn = btnLayout.findViewById<MaterialButton>(R.id.uri_segment)
+                    btn.text = s
+                    if (i == uri.pathSegments.size - 2) btn.icon = null
+                    btn.setOnClickListener { ContentManager.requestUri(btnUri) }
+
+                    segmentsContainer.addView(btnLayout)
+                }
+            }
+
+        } else {
+            current.text = uri.host
+            current.setPadding(current.paddingLeft, current.paddingTop, current.paddingRight, dpToPx(this, 6f))
         }
     }
 }

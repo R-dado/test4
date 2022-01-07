@@ -7,16 +7,30 @@
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
-        <item name="android:tint">?attr/colorOnBackground</item>
+        <item name="android:tint">?attr/colorOnSurface</item>
     </style>
 
     <style name="Widget.GemBrowser.EditText.UriBar" parent="Widget.AppCompat.EditText">
         <item name="android:background">@drawable/bg_uri_edittext</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingEnd">12dp</item>
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="Widget.GemBrowser.PopupMenu" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">@drawable/bg_popup_rounded</item>
+    </style>
+
+    <style name="Theme.GemBrowser.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="shapeAppearance">@style/ShapeAppearance.GemBrowser.NormalRounded</item>
+    </style>
+
+    <style name="ShapeAppearance.GemBrowser.NormalRounded" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
     </style>
 </resources>

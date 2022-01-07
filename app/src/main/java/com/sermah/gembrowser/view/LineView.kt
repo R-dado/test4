@@ -6,13 +6,26 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import com.sermah.gembrowser.R
 import com.sermah.gembrowser.data.ContentManager
 import com.sermah.gembrowser.data.StyleManager
 import com.sermah.gembrowser.data.StyleManager.dpToPx
 import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.model.style.LineStyle
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.view.Gravity
+import android.view.Menu
+import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+
+import androidx.core.content.ContextCompat.getSystemService
+
+
+
 
 class LineView: AppCompatTextView {
     var data: String = ""
@@ -52,12 +65,34 @@ class LineView: AppCompatTextView {
     }
 
     fun link(uri: Uri){
-        
         setOnClickListener {
             ContentManager.requestUri(uri)
         }
         setOnLongClickListener { // TODO: Make a dialog for link - link address, copy link, open link in separate tab
-            Toast.makeText(context, uri.toString(), Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, uri.toString(), Toast.LENGTH_SHORT).show()
+            val menu = PopupMenu(context, this, Gravity.END, 0, R.style.Widget_GemBrowser_PopupMenu)
+            menu.menu.add(1, Menu.NONE, Menu.NONE, uri.toString())
+                .setOnMenuItemClickListener {
+                    Toast.makeText(context, uri.toString(), Toast.LENGTH_SHORT).show()
+                    true
+                }
+            menu.menu.add(2, Menu.NONE, Menu.NONE, context.getString(R.string.menu_link_copy))
+                .setOnMenuItemClickListener {
+                    val clipboard: ClipboardManager? =
+                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                    val clip = ClipData.newRawUri(context.getString(R.string.clipboard_label_link), uri)
+                    clipboard?.setPrimaryClip(clip)
+                    true
+                }
+            menu.menu.add(2, Menu.NONE, Menu.NONE, context.getString(R.string.menu_link_copy_text))
+                .setOnMenuItemClickListener {
+                    val clipboard: ClipboardManager? =
+                        context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                    val clip = ClipData.newPlainText(context.getString(R.string.clipboard_label_link), rawText)
+                    clipboard?.setPrimaryClip(clip)
+                    true
+                }
+            menu.show()
             true
         }
 
