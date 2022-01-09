@@ -1,9 +1,10 @@
 package com.sermah.gembrowser.data
 
 import android.net.Uri
+import com.sermah.gembrowser.data.network.GeminiClient
+import com.sermah.gembrowser.data.parsing.GmiParser
 import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.model.ContentPage
-import java.util.*
 
 object ContentManager {
 

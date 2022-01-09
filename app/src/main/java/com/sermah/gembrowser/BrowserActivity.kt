@@ -13,8 +13,8 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sermah.gembrowser.adapter.ContentAdapter
 import com.sermah.gembrowser.data.ContentManager
-import com.sermah.gembrowser.data.FontManager
-import com.sermah.gembrowser.data.StyleManager
+import com.sermah.gembrowser.data.theming.FontManager
+import com.sermah.gembrowser.data.theming.StyleManager
 import com.sermah.gembrowser.databinding.ActivityBrowserBinding
 import android.view.animation.TranslateAnimation
 
@@ -30,7 +30,7 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.widget.HorizontalScrollView
 import com.google.android.material.button.MaterialButton
-import com.sermah.gembrowser.data.StyleManager.dpToPx
+import com.sermah.gembrowser.data.theming.StyleManager.dpToPx
 
 
 class BrowserActivity : AppCompatActivity() {
@@ -81,6 +81,8 @@ class BrowserActivity : AppCompatActivity() {
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles
         reloadStyleDark()
+
+        // TODO: Create ColorHook, hook views to their respective colors, so hooks update views on color change
 
         homeButton = binding.homepageBtn
         menuButton = binding.menuBtn

@@ -1,18 +1,13 @@
 package com.sermah.gembrowser.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sermah.gembrowser.R
-import com.sermah.gembrowser.data.StyleManager
+import com.sermah.gembrowser.data.theming.StyleManager
 import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.view.LineView
 

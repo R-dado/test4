@@ -9,10 +9,10 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 import com.sermah.gembrowser.R
 import com.sermah.gembrowser.data.ContentManager
-import com.sermah.gembrowser.data.StyleManager
-import com.sermah.gembrowser.data.StyleManager.dpToPx
+import com.sermah.gembrowser.data.theming.StyleManager
+import com.sermah.gembrowser.data.theming.StyleManager.dpToPx
 import com.sermah.gembrowser.model.ContentLine
-import com.sermah.gembrowser.model.style.LineStyle
+import com.sermah.gembrowser.model.theming.LineStyle
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -20,11 +20,6 @@ import android.view.Gravity
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
-
-import androidx.core.content.ContextCompat.getSystemService
-
-
 
 
 class LineView: AppCompatTextView {
@@ -142,7 +137,7 @@ class LineView: AppCompatTextView {
             LineStyle.TextStyle.BOLD_ITALIC ->  Typeface.BOLD_ITALIC
         })
         setTextSize(TypedValue.COMPLEX_UNIT_SP, style.size)
-        setTextColor(if (StyleManager.isDark) style.color.dark else style.color.light)
+        setTextColor(style.color)
         setPaddingRelative(
             dpToPx(this.context, style.padStart),
             dpToPx(this.context, style.padTop),

@@ -1,14 +1,9 @@
-package com.sermah.gembrowser.data
+package com.sermah.gembrowser.data.network
 
-import android.R.attr
 import android.net.Uri
 import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.io.PrintWriter
 import java.net.ConnectException
-import java.net.Socket
 import java.net.SocketTimeoutException
 import java.nio.charset.StandardCharsets
 import java.security.cert.CertificateException
@@ -16,7 +11,6 @@ import java.security.cert.X509Certificate
 import java.util.*
 import javax.net.SocketFactory
 import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 

@@ -1,10 +1,7 @@
-package com.sermah.gembrowser.data
+package com.sermah.gembrowser.data.theming
 
 import android.content.res.AssetManager
 import android.graphics.Typeface
-import android.util.Log
-import kotlin.io.path.Path
-import kotlin.io.path.name
 
 object FontManager {
     private const val fontsPath = "fonts/"
@@ -12,7 +9,7 @@ object FontManager {
 
     fun loadFonts(assets: AssetManager){
         assets.list(fontsPath)?.forEach{
-            typefaces[it] = Typeface.createFromAsset(assets, fontsPath+it)
+            typefaces[it] = Typeface.createFromAsset(assets, fontsPath +it)
         }
     }
 

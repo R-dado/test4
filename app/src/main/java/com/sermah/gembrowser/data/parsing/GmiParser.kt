@@ -1,7 +1,6 @@
-package com.sermah.gembrowser.data
+package com.sermah.gembrowser.data.parsing
 
 import android.net.Uri
-import android.util.Log
 import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.model.ContentLine.ContentType.*
 
