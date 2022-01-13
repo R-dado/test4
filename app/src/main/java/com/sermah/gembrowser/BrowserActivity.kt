@@ -20,6 +20,7 @@ import android.view.animation.TranslateAnimation
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Paint
 import android.os.Build
 
 import android.text.InputType
@@ -30,7 +31,10 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.widget.Button
 import android.widget.HorizontalScrollView
+import com.sermah.gembrowser.data.SimpleDataStorage
 import com.sermah.gembrowser.model.ContentLine
+import com.sermah.gembrowser.model.theming.AppColors
+import com.sermah.gembrowser.model.theming.AppStyles
 
 
 class BrowserActivity : AppCompatActivity() {
@@ -72,6 +76,9 @@ class BrowserActivity : AppCompatActivity() {
             onCertificate   = tempHandleNonSuccess,
         )
         ContentManager.onNonGeminiScheme = fun (uri: Uri) {handleNonGeminiScheme(uri)}
+
+        StyleManager.loadStyles(this, lightName = "default_light")
+        StyleManager.updateStyles()
 
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles

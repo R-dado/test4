@@ -1,6 +1,7 @@
 package com.sermah.gembrowser.data.theming
 
 import android.content.Context
+import com.sermah.gembrowser.data.SimpleDataStorage
 import com.sermah.gembrowser.model.theming.AppColors
 import com.sermah.gembrowser.model.theming.AppStyles
 import com.sermah.gembrowser.model.theming.LineStyle
@@ -26,14 +27,15 @@ object StyleManager {
     lateinit var stylePre       : LineStyle
 
     init {
-        loadStyles()
         updateStyles()
     }
 
-    fun loadStyles(lightName: String? = null, darkName: String? = null) {
+    fun loadStyles(ctx: Context, lightName: String? = null, darkName: String? = null) {
         // TODO: Do actual theme loading
-        primaryStyles = defaultLightStyles
-        darkStyles = defaultDarkStyles
+        val dataReader = SimpleDataStorage(ctx)
+        StyleManager.primaryStyles = AppStyles(AppColors(
+            map = dataReader.readColors("themes/$lightName/colors.dat")
+        ))
     }
 
     fun updateStyles() {

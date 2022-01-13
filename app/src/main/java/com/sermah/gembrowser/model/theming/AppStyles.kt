@@ -19,7 +19,7 @@ data class AppStyles(
     constructor(colors: AppColors): this(
         colors = colors,
         styleText = LineStyle (
-            color = colors.ctPrimaryText
+            color = colors.contentText
         ),
         styleH1 = LineStyle (
             size    = 36f,
@@ -29,7 +29,7 @@ data class AppStyles(
             lineSpacing = 4f,
             style = LineStyle.TextStyle.BOLD,
             align = LineStyle.Alignment.CENTER,
-            color = colors.ctPrimaryText,
+            color = colors.contentTextH1,
         ),
         styleH2 = LineStyle (
             size    = 28f,
@@ -38,45 +38,45 @@ data class AppStyles(
             padBottom = 8f,
             lineSpacing = 4f,
             style = LineStyle.TextStyle.BOLD,
-            color = colors.ctPrimaryText,
+            color = colors.contentTextH2,
         ),
         styleH3 = LineStyle (
             size    = 24f,
             //prefix  = "### ",
             style = LineStyle.TextStyle.BOLD,
-            color = colors.ctPrimaryText,
+            color = colors.contentTextH3,
         ),
         styleLink = LineStyle (
             padTop = 4f,
             padBottom = 4f,
-            color   = colors.ctLinkText,
+            color   = colors.contentTextLink,
             prefix  = "🔗 ",
         ),
         styleExtLink = LineStyle (
             padTop = 4f,
             padBottom = 4f,
-            color   = colors.ctLinkText,
+            color   = colors.contentTextLink,
             prefix  = "📡 ",
         ),
         styleQuote = LineStyle (
             //prefix = "> ",
             padStart = 32f,
             style = LineStyle.TextStyle.ITALIC,
-            color = colors.ctSecondaryText,
+            color = colors.contentTextQuote,
         ),
         styleUl = LineStyle (
             prefix = "• ",
             padStart = 32f,
             padTop = 2f,
             padBottom = 2f,
-            color = colors.ctPrimaryText,
+            color = colors.contentTextList,
         ),
         styleEmpty = LineStyle (
             padStart = 0f,
             padBottom = 0f,
             padEnd = 0f,
             padTop = 0f,
-            color = colors.ctPrimaryText,
+            color = colors.contentText,
         ),
         stylePre = LineStyle (
             size = 14f,
@@ -84,7 +84,7 @@ data class AppStyles(
             padBottom = 4f,
             padTop = 4f,
             typeface = Typeface.MONOSPACE,
-            color = colors.ctPrimaryText,
+            color = colors.contentTextPre,
             nowrap = true,
         ),
     )

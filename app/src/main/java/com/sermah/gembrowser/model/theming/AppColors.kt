@@ -1,25 +1,47 @@
 package com.sermah.gembrowser.model.theming
 
 import android.graphics.Color
-import android.util.Log
 import androidx.core.math.MathUtils
 import kotlin.math.roundToInt
 
-// When adding new colors, don't forget to add them in `inverted()` function!!!
 data class AppColors (
+    private var map:            Map<String, Int> = mapOf(),
+    private var parentMap:      Map<String, Int> = mapOf(),
+    var defaultText:            Int = Color.BLACK,
+    var defaultBackground:      Int = Color.WHITE,
+    ){
+
+    // Map delegate for correct default values handling
+    private val mapDg: Map<String, Int> = map.withDefault { name ->
+        parentMap.withDefault { nameParent ->
+            if (nameParent.contains("background", ignoreCase = true))
+                defaultBackground else defaultText
+        }[name] ?: Color.MAGENTA
+    }
+
     // UI Colors
-    var uiPrimaryText:          Int = Color.BLACK,
-    var uiSecondaryText:        Int = Color.DKGRAY,
-    var uiBackground:           Int = Color.WHITE,
-    var uiContainerBackground:  Int = Color.LTGRAY,
+    val textPrimary                 :Int by mapDg
+    val textSecondary               :Int by mapDg
+    val textBottomTitle             :Int by mapDg
+    val textBottomSegments          :Int by mapDg
+    val textBottomURI               :Int by mapDg
+    val background                  :Int by mapDg
+    val backgroundContainer         :Int by mapDg
+    val backgroundBottom            :Int by mapDg
+    val backgroundBottomURI         :Int by mapDg
 
     // Content Colors
-    var ctPrimaryText:          Int = Color.BLACK,
-    var ctSecondaryText:        Int = Color.DKGRAY,
-    var ctLinkText:             Int = Color.rgb(0x00, 0x77, 0xFF),
-    var ctBackground:           Int = Color.WHITE,
-    var ctPreBackground:        Int = Color.LTGRAY,
-) {
+    val contentText                 :Int by mapDg
+    val contentTextH1               :Int by mapDg
+    val contentTextH2               :Int by mapDg
+    val contentTextH3               :Int by mapDg
+    val contentTextLink             :Int by mapDg
+    val contentTextPre              :Int by mapDg
+    val contentTextQuote            :Int by mapDg
+    val contentTextList             :Int by mapDg
+    val contentBackground           :Int by mapDg
+    val contentBackgroundPre        :Int by mapDg
+    val contentBackgroundQuote      :Int by mapDg
 
     // invert average value of rgb channels
     private fun invertBrightness(color: Int): Int {
@@ -30,9 +52,6 @@ data class AppColors (
         return if (toInvert > 0) {
             val k : Float = (255 - toInvert).toFloat() / toInvert
 
-            if (k == 0f)
-                Log.d("Colors", "k == 0 at color ($r, $g, $b)!")
-
             r = MathUtils.clamp((r*k).roundToInt(), 0, 255)
             g = MathUtils.clamp((g*k).roundToInt(), 0, 255)
             b = MathUtils.clamp((b*k).roundToInt(), 0, 255)
@@ -42,18 +61,23 @@ data class AppColors (
         }
     }
 
-    fun inverted(): AppColors {
+    fun makeChild() : AppColors {
         return AppColors(
-            uiPrimaryText = invertBrightness(this.uiPrimaryText),
-            uiSecondaryText = invertBrightness(this.uiSecondaryText),
-            uiBackground = invertBrightness(this.uiBackground),
-            uiContainerBackground = invertBrightness(this.uiContainerBackground),
+            parentMap = map,
+            defaultBackground = defaultBackground,
+            defaultText = defaultText,
+        )
+    }
 
-            ctPrimaryText = invertBrightness(this.ctPrimaryText),
-            ctSecondaryText = invertBrightness(this.ctSecondaryText),
-            ctLinkText = invertBrightness(this.ctLinkText),
-            ctBackground = invertBrightness(this.ctBackground),
-            ctPreBackground = invertBrightness(this.ctPreBackground),
+    // Returns colors that are produced by inverting brightness of original colors.
+    // If replaceParent provided and non-null, invertParent won't count.
+    fun inverted(replaceParent: Map<String, Int>? = null, invertParent: Boolean = true): AppColors {
+        return AppColors(
+            map = map.mapValues { (_, color) -> invertBrightness(color) },
+            parentMap = replaceParent ?: if (invertParent)
+                parentMap.mapValues { (_, color) -> invertBrightness(color) } else parentMap,
+            defaultText = invertBrightness(defaultText),
+            defaultBackground = invertBrightness(defaultBackground),
         )
     }
 }

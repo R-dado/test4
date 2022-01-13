@@ -1,0 +1,21 @@
+textPrimary                 = 000
+textSecondary               = 222
+textBottomTitle             = 000
+textBottomSegments          = 333
+textBottomURI               = 111
+background                  = ffffff
+backgroundContainer         = f0f0f0
+backgroundBottom            = f0f0f0
+backgroundBottomURI         = e0e0e0
+
+contentText                 = 000
+contentTextH1               = 53373c
+contentTextH2               = 5a7a59
+contentTextH3               = 4b3612
+contentTextLink             = 5065a5
+contentTextPre              = 111
+contentTextQuote            = 333
+contentTextList             = 111
+contentBackground           = fff
+contentBackgroundPre        = f0f0f0
+contentBackgroundQuote      = fff
