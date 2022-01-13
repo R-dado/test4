@@ -12,4 +12,5 @@
     <string name="menu_link_copy">Copy link address</string>
     <string name="menu_link_copy_text">Copy link text</string>
     <string name="clipboard_label_link">Copied URI</string>
+    <string name="uri_field_hint">Enter Gemini URL here…</string>
 </resources>

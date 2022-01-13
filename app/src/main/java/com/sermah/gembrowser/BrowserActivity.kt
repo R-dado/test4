@@ -28,9 +28,9 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+import android.widget.Button
 import android.widget.HorizontalScrollView
-import com.google.android.material.button.MaterialButton
-import com.sermah.gembrowser.data.theming.StyleManager.dpToPx
+import com.sermah.gembrowser.model.ContentLine
 
 
 class BrowserActivity : AppCompatActivity() {
@@ -58,19 +58,14 @@ class BrowserActivity : AppCompatActivity() {
         }
 
         ContentManager.contentUpdateHandler = ContentManager.ContentUpdateHandler (
-            onSuccess = fun(_, lines) {
-                runOnUiThread {
-                    contentRV.adapter = ContentAdapter(this, lines)
-                    assembleUriButtons(ContentManager.currentPage.uri)
-                    uriField.setText(ContentManager.currentPage.uri.toString())
-                    uriField.clearFocus()
-                }
-            },
+            onSuccess = {_, lines -> updateContent(lines)},
             onInput         = fun(code, info, uri) {
                 handleInput(info, uri, code == "11")
             },
-            onRedirect      = fun(_, toUri, _) {
-                ContentManager.requestUri(Uri.parse(toUri))
+            onRedirect      = fun(_, toUri, uri) {
+                val to = Uri.parse(toUri)
+                if (!to.equals(uri))
+                    ContentManager.requestUri(to)
             },
             onTemporary     = tempHandleNonSuccess,
             onPermanent     = tempHandleNonSuccess,
@@ -80,7 +75,7 @@ class BrowserActivity : AppCompatActivity() {
 
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles
-        reloadStyleDark()
+        updateDarkMode(resources.configuration)
 
         // TODO: Create ColorHook, hook views to their respective colors, so hooks update views on color change
 
@@ -116,26 +111,29 @@ class BrowserActivity : AppCompatActivity() {
                 return false
             })
         uriField.background.alpha = 15
-        uriField.setText(ContentManager.currentPage.uri.toString())
+        uriField.setText(ContentManager.currentTab.currentPage.uri.toString())
 
         contentRV.setHasFixedSize(true)
-        contentRV.adapter = ContentAdapter(this, ContentManager.currentPage.lines)
+        contentRV.adapter = ContentAdapter(this, ContentManager.currentTab.currentPage.lines)
         if(intent?.data != null) ContentManager.requestUri(intent?.data!!)
-        else if(ContentManager.currentPage.lines.isEmpty())
+        else if(ContentManager.currentTab.currentPage.lines.isEmpty())
             ContentManager.requestUri(Uri.parse(homepage)) // TODO: Customization - homepage
+        else {
+            updateContent(null)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        reloadStyleDark()
+        updateDarkMode(newConfig)
     }
 
     override fun onBackPressed() {
         if (!ContentManager.loadPreviousPage()) super.onBackPressed()
     }
 
-    fun reloadStyleDark() {
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+    fun updateDarkMode(cfg: Configuration) {
+        when (cfg.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> StyleManager.isDark = true
             Configuration.UI_MODE_NIGHT_NO -> StyleManager.isDark = false
         }
@@ -222,21 +220,29 @@ class BrowserActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateContent(lines: List<ContentLine>?) {
+        runOnUiThread {
+            if (lines != null)
+                contentRV.adapter = ContentAdapter(this, lines)
+            assembleUriButtons(ContentManager.currentTab.currentPage.uri)
+            uriField.setText(ContentManager.currentTab.currentPage.uri.toString())
+            uriField.clearFocus()
+        }
+    }
+
     // TODO: Rework Uri building in other classes
     fun assembleUriButtons(uri: Uri) {
-        val current =  binding.uriCurrent
+        val current = binding.uriCurrent
         val segmentsContainer = binding.uriSegmentsContainer
         segmentsContainer.removeAllViews()
         val newUri = uri.buildUpon().path("").query("")
         if (uri.pathSegments.size > 0){
             current.text = uri.lastPathSegment
-            current.setPadding(current.paddingLeft, current.paddingTop, current.paddingRight, 0)
             val btnUriFirst = newUri.build()
 
             val btnLayoutFirst = layoutInflater.inflate(R.layout.button_uri_segment, null)
-            val btnFirst = btnLayoutFirst.findViewById<MaterialButton>(R.id.uri_segment)
-            btnFirst.text = uri.host
-            if (uri.pathSegments.size == 1) btnFirst.icon = null
+            val btnFirst = btnLayoutFirst.findViewById<Button>(R.id.uri_segment_btn)
+            btnFirst.text = "${uri.host ?: "..."} ›"
             btnFirst.setOnClickListener { ContentManager.requestUri(btnUriFirst) }
 
             segmentsContainer.addView(btnLayoutFirst)
@@ -249,18 +255,14 @@ class BrowserActivity : AppCompatActivity() {
                     val btnUri = newUri.build()
 
                     val btnLayout = layoutInflater.inflate(R.layout.button_uri_segment, null)
-                    val btn = btnLayout.findViewById<MaterialButton>(R.id.uri_segment)
-                    btn.text = s
-                    if (i == uri.pathSegments.size - 2) btn.icon = null
+                    val btn = btnLayout.findViewById<Button>(R.id.uri_segment_btn)
+                    btn.text = "$s ›"
                     btn.setOnClickListener { ContentManager.requestUri(btnUri) }
 
                     segmentsContainer.addView(btnLayout)
                 }
             }
 
-        } else {
-            current.text = uri.host
-            current.setPadding(current.paddingLeft, current.paddingTop, current.paddingRight, dpToPx(this, 6f))
-        }
+        } else { current.text = uri.host }
     }
 }

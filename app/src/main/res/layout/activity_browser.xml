@@ -79,11 +79,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="4dp"
+                android:paddingBottom="0dp"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
                 tools:text="file.gmi"/>
             <HorizontalScrollView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:scrollbarSize="2dp"
                 android:requiresFadingEdge="horizontal">
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -106,6 +108,7 @@
                 android:layout_marginEnd="10dp"
                 android:maxLines="1"
                 android:inputType="textUri"
+                android:hint="@string/uri_field_hint"
                 style="@style/Widget.GemBrowser.EditText.UriBar"
                 android:importantForAutofill="no" />
             <androidx.appcompat.widget.AppCompatImageButton
