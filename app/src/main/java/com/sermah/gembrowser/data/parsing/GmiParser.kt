@@ -1,6 +1,7 @@
 package com.sermah.gembrowser.data.parsing
 
 import android.net.Uri
+import com.sermah.gembrowser.data.UriTools.addRelative
 import com.sermah.gembrowser.model.ContentLine
 import com.sermah.gembrowser.model.ContentLine.ContentType.*
 
@@ -60,10 +61,7 @@ object GmiParser {
                         text = fmtd.substringAfter(' ').trim()
                         var uri = Uri.parse(link)
                         if (uri.isRelative) {
-                            var newUri = absUri.scheme + "://" + absUri.authority
-                            if (link[0] != '/') newUri += absUri.path?.replaceAfterLast("/", "")
-                            newUri += link
-                            uri = Uri.parse(newUri)
+                            uri = absUri.addRelative(uri)
                         }
                         extra = uri.normalizeScheme().toString()
                     }
