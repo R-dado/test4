@@ -1,6 +1,7 @@
 package com.sermah.gembrowser.model.theming
 
 import android.graphics.Color
+import android.util.Log
 import androidx.core.math.MathUtils
 import kotlin.math.roundToInt
 
@@ -29,6 +30,8 @@ data class AppColors (
     val backgroundContainer         :Int by mapDg
     val backgroundBottom            :Int by mapDg
     val backgroundBottomURI         :Int by mapDg
+    val iconAccent                  :Int by mapDg
+    val iconNeutral                 :Int by mapDg
 
     // Content Colors
     val contentText                 :Int by mapDg
@@ -43,27 +46,9 @@ data class AppColors (
     val contentBackgroundPre        :Int by mapDg
     val contentBackgroundQuote      :Int by mapDg
 
-    // invert average value of rgb channels
-    private fun invertBrightness(color: Int): Int {
-        var r = Color.red(color)
-        var g = Color.green(color)
-        var b = Color.blue(color)
-        val toInvert = (r + g + b) / 3
-        return if (toInvert > 0) {
-            val k : Float = (255 - toInvert).toFloat() / toInvert
-
-            r = MathUtils.clamp((r*k).roundToInt(), 0, 255)
-            g = MathUtils.clamp((g*k).roundToInt(), 0, 255)
-            b = MathUtils.clamp((b*k).roundToInt(), 0, 255)
-            Color.argb(Color.alpha(color), r, g, b)
-        } else{
-            Color.argb(Color.alpha(color), 255, 255, 255)
-        }
-    }
-
     fun makeChild() : AppColors {
         return AppColors(
-            parentMap = map,
+            parentMap = map.toMap(),
             defaultBackground = defaultBackground,
             defaultText = defaultText,
         )
@@ -73,11 +58,40 @@ data class AppColors (
     // If replaceParent provided and non-null, invertParent won't count.
     fun inverted(replaceParent: Map<String, Int>? = null, invertParent: Boolean = true): AppColors {
         return AppColors(
-            map = map.mapValues { (_, color) -> invertBrightness(color) },
+            map = map.mapValues { invertBrightness(it.value) },
             parentMap = replaceParent ?: if (invertParent)
-                parentMap.mapValues { (_, color) -> invertBrightness(color) } else parentMap,
+                parentMap.mapValues { invertBrightness(it.value) } else parentMap.toMap(),
             defaultText = invertBrightness(defaultText),
             defaultBackground = invertBrightness(defaultBackground),
         )
+    }
+
+    companion object {
+        // invert average value of rgb channels
+        fun invertBrightness(color: Int): Int {
+            var r = Color.red(color)
+            var g = Color.green(color)
+            var b = Color.blue(color)
+            val luminance = getLuminance(color)
+            return if (luminance > 0) {
+                val k : Float = (255 - luminance).toFloat() / luminance
+
+                r = MathUtils.clamp((r*k).roundToInt(), 0, 255)
+                g = MathUtils.clamp((g*k).roundToInt(), 0, 255)
+                b = MathUtils.clamp((b*k).roundToInt(), 0, 255)
+                Color.argb(Color.alpha(color), r, g, b)
+            } else{
+                Color.argb(Color.alpha(color), 255, 255, 255)
+            }
+        }
+
+        // Returns (3R + 4G + B) >> 3
+        // https://stackoverflow.com/a/596241/10172462
+        fun getLuminance(color: Int): Int {
+            val r = Color.red(color)
+            val g = Color.green(color)
+            val b = Color.blue(color)
+            return (3*r + 4*g + b) shr 3
+        }
     }
 }

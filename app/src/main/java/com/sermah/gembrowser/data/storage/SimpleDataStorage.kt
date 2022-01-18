@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.data
+package com.sermah.gembrowser.data.storage
 
 import android.content.Context
 import android.content.res.AssetManager
@@ -14,9 +14,8 @@ class SimpleDataStorage(private val ctx: Context) {
             if (it.isNotBlank() and it.contains('=')) {
                 val name = it.substringBefore('=').trim()
                 val valueStr = it.substringAfter('=').trim()
-                var color = 0
-                if (valueStr.isHex()) {
-                    color = when (valueStr.length) {
+                if (valueStr.isHex() && valueStr.length in setOf(3,4,6,8)) {
+                    val color = when (valueStr.length) {
                         3 -> Color.rgb(
                             (valueStr.subSequence(0,1) as String).toInt(16) * 17,
                             (valueStr.subSequence(1,2) as String).toInt(16) * 17,
@@ -41,10 +40,8 @@ class SimpleDataStorage(private val ctx: Context) {
                         )
                         else -> -1
                     }
-                    if (color != -1) {
-                        map[name] = color
-                        Log.d("Colors parsing", "$name to ${"%x".format(color)} (original \"$valueStr\")")
-                    }
+                    map[name] = color
+                    Log.d("Colors parsing", "$name to ${"%x".format(color)} (original \"$valueStr\")")
                 }
             }
         }

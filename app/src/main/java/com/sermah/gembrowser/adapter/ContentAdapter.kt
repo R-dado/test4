@@ -2,13 +2,14 @@ package com.sermah.gembrowser.adapter
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sermah.gembrowser.R
 import com.sermah.gembrowser.data.theming.StyleManager
-import com.sermah.gembrowser.model.ContentLine
+import com.sermah.gembrowser.model.content.ContentLine
 import com.sermah.gembrowser.view.LineView
 
 class ContentAdapter(
@@ -17,7 +18,7 @@ class ContentAdapter(
 ) : RecyclerView.Adapter<ContentAdapter.ItemViewHolder>() {
 
     class ItemViewHolder(
-        private val view: View,
+        view: View,
     ) : RecyclerView.ViewHolder(view){
         val lineView : LineView = view.findViewById(R.id.content_text)
     }
@@ -34,8 +35,6 @@ class ContentAdapter(
         var text = line.data.trim()
         var style = StyleManager.styleText
         val lineView = holder.lineView
-
-        //Log.d("Debug", line.data)
 
         lineView.data = line.data
 
@@ -65,7 +64,7 @@ class ContentAdapter(
                 style = StyleManager.styleQuote
             }
             ContentLine.ContentType.UL -> {
-                style = StyleManager.styleUl // TODO: Leave original indents (multilevel lists)
+                style = StyleManager.styleUl
             }
             ContentLine.ContentType.EMPTY -> {
                 style = StyleManager.styleEmpty

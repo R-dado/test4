@@ -1,7 +1,7 @@
 package com.sermah.gembrowser
 
 import android.net.Uri
-import com.sermah.gembrowser.data.UriTools.addRelative
+import com.sermah.gembrowser.util.UriTools.addRelative
 import org.junit.Test
 
 import org.junit.Assert.*

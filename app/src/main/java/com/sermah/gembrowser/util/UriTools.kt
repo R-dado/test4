@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.data
+package com.sermah.gembrowser.util
 
 import android.net.Uri
 
@@ -22,8 +22,10 @@ object UriTools {
                 resultPath += "/$it"
         }
 
+
         if (relIsDirectory) resultPath += '/'
-        return this.buildUpon().path(resultPath).build()
+        val resultUri = this.buildUpon().query(rel.query).fragment(rel.fragment).path(resultPath).build()
+        return resultUri
     }
 
     fun Uri.addRelative(rel: String) =

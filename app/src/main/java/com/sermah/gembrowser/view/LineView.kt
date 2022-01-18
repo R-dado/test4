@@ -8,10 +8,9 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 import com.sermah.gembrowser.R
-import com.sermah.gembrowser.data.ContentManager
-import com.sermah.gembrowser.data.theming.StyleManager
+import com.sermah.gembrowser.data.content.ContentManager
 import com.sermah.gembrowser.data.theming.StyleManager.dpToPx
-import com.sermah.gembrowser.model.ContentLine
+import com.sermah.gembrowser.model.content.ContentLine
 import com.sermah.gembrowser.model.theming.LineStyle
 
 import android.content.ClipData
@@ -30,7 +29,7 @@ class LineView: AppCompatTextView {
     private var postfix: String = ""
 
     var horizontalScroll: Boolean = false
-    set(b: Boolean) {
+    set(b) {
         if (b) enableHorizontalScroll()
         else disableHorizontalScroll()
         field = b
@@ -64,7 +63,6 @@ class LineView: AppCompatTextView {
             ContentManager.requestUri(uri)
         }
         setOnLongClickListener { // TODO: Make a dialog for link - link address, copy link, open link in separate tab
-            //Toast.makeText(context, uri.toString(), Toast.LENGTH_SHORT).show()
             val menu = PopupMenu(context, this, Gravity.END, 0, R.style.Widget_GemBrowser_PopupMenu)
             menu.menu.add(1, Menu.NONE, Menu.NONE, uri.toString())
                 .setOnMenuItemClickListener {
@@ -145,7 +143,7 @@ class LineView: AppCompatTextView {
             dpToPx(this.context, style.padBottom),
         )
         setLineSpacing(dpToPx(this.context, style.lineSpacing).toFloat(), 1f)
-        horizontalScroll = style.nowrap && lineType != ContentLine.ContentType.LINK
+        horizontalScroll = style.nowrap
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)

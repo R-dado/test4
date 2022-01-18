@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sermah.gembrowser.adapter.ContentAdapter
-import com.sermah.gembrowser.data.ContentManager
+import com.sermah.gembrowser.data.content.ContentManager
 import com.sermah.gembrowser.data.theming.FontManager
 import com.sermah.gembrowser.data.theming.StyleManager
 import com.sermah.gembrowser.databinding.ActivityBrowserBinding
@@ -20,7 +20,6 @@ import android.view.animation.TranslateAnimation
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Paint
 import android.os.Build
 
 import android.text.InputType
@@ -31,8 +30,8 @@ import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.widget.Button
 import android.widget.HorizontalScrollView
-import com.sermah.gembrowser.data.SimpleDataStorage
-import com.sermah.gembrowser.model.ContentLine
+import androidx.core.view.WindowCompat
+import com.sermah.gembrowser.model.content.ContentLine
 import com.sermah.gembrowser.model.theming.AppColors
 import com.sermah.gembrowser.model.theming.AppStyles
 
@@ -45,6 +44,7 @@ class BrowserActivity : AppCompatActivity() {
     private lateinit var homeButton: AppCompatImageButton
     private lateinit var menuButton: AppCompatImageButton
     private lateinit var infoBar: LinearLayoutCompat
+    private var styles: AppStyles = StyleManager.currentStyles
 
     private var homepage = "gemini://gemini.circumlunar.space/"
 
@@ -63,10 +63,10 @@ class BrowserActivity : AppCompatActivity() {
 
         ContentManager.contentUpdateHandler = ContentManager.ContentUpdateHandler (
             onSuccess = {_, lines -> updateContent(lines)},
-            onInput         = fun(code, info, uri) {
+            onInput         = { code, info, uri ->
                 handleInput(info, uri, code == "11")
             },
-            onRedirect      = fun(_, toUri, uri) {
+            onRedirect      = { _, toUri, uri ->
                 val to = Uri.parse(toUri)
                 if (!to.equals(uri))
                     ContentManager.requestUri(to)
@@ -75,14 +75,26 @@ class BrowserActivity : AppCompatActivity() {
             onPermanent     = tempHandleNonSuccess,
             onCertificate   = tempHandleNonSuccess,
         )
-        ContentManager.onNonGeminiScheme = fun (uri: Uri) {handleNonGeminiScheme(uri)}
+        ContentManager.onNonGeminiScheme = {uri -> handleNonGeminiScheme(uri)}
 
-        StyleManager.loadStyles(this, lightName = "default_light")
-        StyleManager.updateStyles()
+        if(!StyleManager.loadedStyles){
+            StyleManager.run {
+                loadStyles(this@BrowserActivity, primaryName = "default_light")
+                darkStyles = AppStyles(colors = primaryStyles.colors.inverted())
+            }
+        }
 
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles
         updateDarkMode(resources.configuration)
+        binding.appColors = styles.colors
+
+        window.navigationBarColor = styles.colors.backgroundBottom
+        window.statusBarColor = styles.colors.background
+        val insetsController = WindowCompat.getInsetsController(window, binding.root)
+        insetsController?.isAppearanceLightNavigationBars = AppColors.getLuminance(window.navigationBarColor) > 127
+        insetsController?.isAppearanceLightStatusBars = AppColors.getLuminance(window.statusBarColor) > 127
+
 
         // TODO: Create ColorHook, hook views to their respective colors, so hooks update views on color change
 
@@ -117,8 +129,8 @@ class BrowserActivity : AppCompatActivity() {
                 }
                 return false
             })
-        uriField.background.alpha = 15
         uriField.setText(ContentManager.currentTab.currentPage.uri.toString())
+        (uriField.parent as View).clipToOutline = true
 
         contentRV.setHasFixedSize(true)
         contentRV.adapter = ContentAdapter(this, ContentManager.currentTab.currentPage.lines)
@@ -144,6 +156,8 @@ class BrowserActivity : AppCompatActivity() {
             Configuration.UI_MODE_NIGHT_YES -> StyleManager.isDark = true
             Configuration.UI_MODE_NIGHT_NO -> StyleManager.isDark = false
         }
+        // StyleManager.updateStyles() is called automatically
+        styles = StyleManager.currentStyles
     }
 
     fun handleNonGeminiScheme(uri: Uri) {
@@ -243,33 +257,38 @@ class BrowserActivity : AppCompatActivity() {
         val segmentsContainer = binding.uriSegmentsContainer
         segmentsContainer.removeAllViews()
         val newUri = uri.buildUpon().path("").query("")
-        if (uri.pathSegments.size > 0){
-            current.text = uri.lastPathSegment
-            val btnUriFirst = newUri.build()
 
-            val btnLayoutFirst = layoutInflater.inflate(R.layout.button_uri_segment, null)
-            val btnFirst = btnLayoutFirst.findViewById<Button>(R.id.uri_segment_btn)
-            btnFirst.text = "${uri.host ?: "..."} ›"
-            btnFirst.setOnClickListener { ContentManager.requestUri(btnUriFirst) }
+        current.text = if (uri.pathSegments.size > 0) uri.lastPathSegment else uri.host
+        val btnUriFirst = newUri.build()
 
-            segmentsContainer.addView(btnLayoutFirst)
+        val btnLayoutFirst = layoutInflater.inflate(R.layout.button_uri_segment, null)
+        btnLayoutFirst.clipToOutline = true
+        val btnFirst = btnLayoutFirst.findViewById<Button>(R.id.uri_segment_btn)
+        btnFirst.text = (uri.host ?: "...") + if (uri.pathSegments.size > 0) " ›" else ""
+        btnFirst.setTextColor(styles.colors.textBottomSegments)
+        btnFirst.setOnClickListener { ContentManager.requestUri(btnUriFirst) }
 
-            uri.pathSegments.forEachIndexed{
-                    i: Int, s: String ->
+        segmentsContainer.addView(btnLayoutFirst)
 
-                if (i < uri.pathSegments.size - 1) {
-                    newUri.appendPath(s)
-                    val btnUri = newUri.build()
+        uri.pathSegments.forEachIndexed{
+                i: Int, s: String ->
 
-                    val btnLayout = layoutInflater.inflate(R.layout.button_uri_segment, null)
-                    val btn = btnLayout.findViewById<Button>(R.id.uri_segment_btn)
-                    btn.text = "$s ›"
-                    btn.setOnClickListener { ContentManager.requestUri(btnUri) }
+            newUri.appendPath(s)
+            val btnUri = newUri.build()
 
-                    segmentsContainer.addView(btnLayout)
-                }
+            val btnLayout = layoutInflater.inflate(R.layout.button_uri_segment, null)
+            btnLayout.clipToOutline = true
+            val btn = btnLayout.findViewById<Button>(R.id.uri_segment_btn)
+            btn.setTextColor(styles.colors.textBottomSegments)
+            if(i < uri.pathSegments.size - 1) {
+                btn.text = "$s ›"
+                btn.setOnClickListener { ContentManager.requestUri(btnUri) }
+            } else {
+                btn.text = s
+                btn.isEnabled = false
             }
 
-        } else { current.text = uri.host }
+            segmentsContainer.addView(btnLayout)
+        }
     }
 }

@@ -1,8 +1,8 @@
-package com.sermah.gembrowser.data.navigation
+package com.sermah.gembrowser.model.content
 
 import android.net.Uri
 import android.util.Log
-import com.sermah.gembrowser.model.ContentPage
+import com.sermah.gembrowser.data.content.ContentManager
 import java.lang.StringBuilder
 
 class ContentTab(
@@ -20,13 +20,15 @@ class ContentTab(
 
         currentIndex -= n
         currentPage = history[currentIndex]
-
+        if (currentPage.tooOld) {
+            ContentManager.requestUri(currentPage.uri, true)
+        }
         //logHistory()
 
         return currentPage
     }
 
-    fun writeInHistory(p: ContentPage) {
+    fun openPage(p: ContentPage) {
         history = history.subList(0, currentIndex + 1)
         history.add(p)
         historyTravel(-1)
@@ -38,9 +40,9 @@ class ContentTab(
         val ot = if (olderThan >= 0) olderThan else 0
 
         var i = 0; while (i < backSize - ot) {
-            history[i] = ContentPage(
-                history[i].uri, history[i].favicon, listOf(), String(), String()
-            )
+            history[i].body = ""
+            history[i].lines = listOf()
+            history[i].tooOld = true
             i++
         }
     }
