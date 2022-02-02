@@ -43,7 +43,11 @@ class LineView: AppCompatTextView {
                 MotionEvent.ACTION_HOVER_ENTER, MotionEvent.ACTION_HOVER_MOVE -> 0.7f
                 else -> 1.0f
             }
-            if (horizontalScroll) {
+            if (horizontalScroll && (
+                        event.action == MotionEvent.ACTION_MOVE &&
+                        event.historySize > 1 &&
+                        (event.x - event.getHistoricalX(1)) > (event.y - event.getHistoricalY(1))
+                    )) {
                 parent.requestDisallowInterceptTouchEvent(true)
             }
             super.onTouchEvent(event)
@@ -64,6 +68,7 @@ class LineView: AppCompatTextView {
         }
         setOnLongClickListener { // TODO: Make a dialog for link - link address, copy link, open link in separate tab
             val menu = PopupMenu(context, this, Gravity.END, 0, R.style.Widget_GemBrowser_PopupMenu)
+
             menu.menu.add(1, Menu.NONE, Menu.NONE, uri.toString())
                 .setOnMenuItemClickListener {
                     Toast.makeText(context, uri.toString(), Toast.LENGTH_SHORT).show()

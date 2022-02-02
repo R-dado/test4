@@ -24,13 +24,14 @@ data class AppColors (
     val textPrimary                 :Int by mapDg
     val textSecondary               :Int by mapDg
     val textBottomTitle             :Int by mapDg
-    val textBottomSegments          :Int by mapDg
     val textBottomURI               :Int by mapDg
+    val textSnackbar                :Int by mapDg
     val background                  :Int by mapDg
     val backgroundContainer         :Int by mapDg
     val backgroundBottom            :Int by mapDg
     val backgroundBottomURI         :Int by mapDg
-    val iconAccent                  :Int by mapDg
+    val backgroundSnackbar          :Int by mapDg
+    val accent                      :Int by mapDg
     val iconNeutral                 :Int by mapDg
 
     // Content Colors
@@ -93,5 +94,14 @@ data class AppColors (
             val b = Color.blue(color)
             return (3*r + 4*g + b) shr 3
         }
+
+//        fun getLuminance(color: Int): Int {
+//            val r = Color.red(color)
+//            val g = Color.green(color)
+//            val b = Color.blue(color)
+//            return MathUtils.clamp(
+//                (0.2126f*r + 0.7152f*g + 0.0722f*b).roundToInt(),
+//                0, 255)
+//        }
     }
 }

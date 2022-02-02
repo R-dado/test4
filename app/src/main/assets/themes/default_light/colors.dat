@@ -1,23 +1,28 @@
 textPrimary                 = 000
 textSecondary               = 222
 textBottomTitle             = 000
-textBottomSegments          = 333
 textBottomURI               = 111
+textSnackbar                = 000
 background                  = fff
 backgroundContainer         = f0f0f0
-backgroundBottom            = fff
-backgroundBottomURI         = eee
-iconAccent                  = 07f
-iconNeutral                 = 000
+backgroundBottom            = eaf8dd
+backgroundBottomURI         = d5e9c3
+backgroundSnackbar          = eaf8dd
+accent                      = 07f
+iconNeutral                 = 202920
 
 contentText                 = 000
-contentTextH1               = 53373c
-contentTextH2               = 5a7a59
-contentTextH3               = 4b3612
-contentTextLink             = 5065a5
+-- h1 hsluv 350, 100, 30
+-- h2 hsluv 110, 100, 30
+-- h3 hsluv 230, 100, 30
+-- link hsluv 230, 100, 40
+contentTextH1               = 8d004d
+contentTextH2               = 344e00
+contentTextH3               = 004d65
+contentTextLink             = 006686
 contentTextPre              = 111
 contentTextQuote            = 333
 contentTextList             = 111
-contentBackground           = fdf4e8
+contentBackground           = fff
 contentBackgroundPre        = f0f0f0
 contentBackgroundQuote      = fff

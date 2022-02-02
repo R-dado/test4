@@ -10,6 +10,14 @@
         <item name="android:tint">?attr/colorOnSurface</item>
     </style>
 
+    <style name="Widget.GemBrowser.Button.BottomBar" parent="Widget.GemBrowser.Button.IconOnly">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
     <style name="Widget.GemBrowser.EditText.UriBar" parent="Widget.AppCompat.EditText">
         <item name="android:textSize">16sp</item>
         <item name="android:textCursorDrawable">@null</item>

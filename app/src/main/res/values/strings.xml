@@ -13,4 +13,9 @@
     <string name="menu_link_copy_text">Copy link text</string>
     <string name="clipboard_label_link">Copied URI</string>
     <string name="uri_field_hint">Enter Gemini URL here…</string>
+    <string name="desc_previous_page">Previous Page</string>
+    <string name="desc_add_remove_bookmark">Add/Remove Bookmark</string>
+    <string name="desc_show_contents">Show Contents</string>
+    <string name="desc_visit_homepage">Visit Homepage</string>
+    <string name="desc_more_options">More Options</string>
 </resources>

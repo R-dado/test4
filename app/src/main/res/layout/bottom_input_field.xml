@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="palette"
+            type="com.sermah.gembrowser.model.theming.AppColors" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/input_field"
+            style="@style/Widget.GemBrowser.EditText.UriBar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_uri_edittext"
+            android:backgroundTint="@{palette.backgroundBottomURI}"
+            android:hint="@string/uri_field_hint"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:textColor="@{palette.textBottomURI}" />
+    </FrameLayout>
+</layout>

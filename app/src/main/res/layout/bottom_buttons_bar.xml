@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="palette"
+            type="com.sermah.gembrowser.model.theming.AppColors" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_history_back"
+            android:tint="@{palette.iconNeutral}"
+            style="@style/Widget.GemBrowser.Button.BottomBar"
+            android:contentDescription="@string/desc_previous_page"
+            android:src="@drawable/ic_arrow_back" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_bookmark"
+            android:tint="@{palette.iconNeutral}"
+            style="@style/Widget.GemBrowser.Button.BottomBar"
+            android:contentDescription="@string/desc_add_remove_bookmark"
+            android:src="@drawable/ic_bookmark_border" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_contents"
+            android:tint="@{palette.iconNeutral}"
+            style="@style/Widget.GemBrowser.Button.BottomBar"
+            android:contentDescription="@string/desc_show_contents"
+            android:src="@drawable/ic_contents" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_homepage"
+            android:tint="@{palette.iconNeutral}"
+            style="@style/Widget.GemBrowser.Button.BottomBar"
+            android:contentDescription="@string/desc_visit_homepage"
+            android:src="@drawable/ic_homepage" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btn_more"
+            android:tint="@{palette.iconNeutral}"
+            style="@style/Widget.GemBrowser.Button.BottomBar"
+            android:contentDescription="@string/desc_more_options"
+            android:src="@drawable/ic_more" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</layout>

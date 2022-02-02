@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="6dp"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_input_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        tools:text="Title"
+        />
 
     <TextView
         android:id="@+id/dialog_input_server_name"
@@ -20,9 +30,29 @@
         android:id="@+id/dialog_input_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:inputType="text"
         android:singleLine="true"
         android:hint="@string/dialog_input_hint"
         android:importantForAutofill="no" />
 
-</LinearLayout>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+        <Button
+            android:id="@+id/dialog_input_btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="#09f"/>
+        <Button
+            android:id="@+id/dialog_input_btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            tools:textColor="#09f"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

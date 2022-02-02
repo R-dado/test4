@@ -2,25 +2,20 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bg_uri_edittext"
-    android:clipToOutline="true">
+    android:layout_height="wrap_content">
     <Button
         android:id="@+id/uri_segment_btn"
         android:saveEnabled="false"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:paddingHorizontal="6dp"
         android:paddingVertical="0dp"
         android:minHeight="0dp"
         android:minWidth="0dp"
+        android:layout_height="wrap_content"
         android:textSize="14sp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:background="#00000000"
-        android:foreground="?android:selectableItemBackground"
-        android:textColor="?attr/colorOnSurface"
         android:textAllCaps="false"
-        style="@style/Widget.AppCompat.Button"
+        style="@style/Widget.AppCompat.Button.Borderless"
         tools:text="Test"/>
 </FrameLayout>

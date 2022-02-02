@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -20,17 +18,26 @@ import android.view.animation.TranslateAnimation
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 
 import android.text.InputType
-import android.util.Log
+import android.view.Gravity
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
 import android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+import android.view.ViewGroup
 
 import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
-import android.widget.Button
-import android.widget.HorizontalScrollView
+import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.children
+import androidx.databinding.DataBindingUtil
+import com.google.android.material.snackbar.Snackbar
+import com.sermah.gembrowser.databinding.BottomButtonsBarBinding
+import com.sermah.gembrowser.databinding.BottomInputFieldBinding
 import com.sermah.gembrowser.model.content.ContentLine
 import com.sermah.gembrowser.model.theming.AppColors
 import com.sermah.gembrowser.model.theming.AppStyles
@@ -42,10 +49,11 @@ class BrowserActivity : AppCompatActivity() {
     private lateinit var contentRV: RecyclerView
     private lateinit var uriField: EditText
     private lateinit var homeButton: AppCompatImageButton
-    private lateinit var menuButton: AppCompatImageButton
-    private lateinit var infoBar: LinearLayoutCompat
+    private lateinit var prevButton: AppCompatImageButton
+    private lateinit var moreButton: AppCompatImageButton
+    private lateinit var buttonsBar : LinearLayoutCompat
+    private lateinit var inputBar : FrameLayout
     private var styles: AppStyles = StyleManager.currentStyles
-
     private var homepage = "gemini://gemini.circumlunar.space/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +70,7 @@ class BrowserActivity : AppCompatActivity() {
         }
 
         ContentManager.contentUpdateHandler = ContentManager.ContentUpdateHandler (
-            onSuccess = {_, lines -> updateContent(lines)},
+            onSuccess = {_, lines -> updateContent(lines) },
             onInput         = { code, info, uri ->
                 handleInput(info, uri, code == "11")
             },
@@ -87,7 +95,7 @@ class BrowserActivity : AppCompatActivity() {
         FontManager.loadFonts(assets)
         StyleManager.stylePre.typeface = FontManager.get("DejaVuSansMono.ttf") // TODO: Customization - font styles
         updateDarkMode(resources.configuration)
-        binding.appColors = styles.colors
+        binding.palette = styles.colors
 
         window.navigationBarColor = styles.colors.backgroundBottom
         window.statusBarColor = styles.colors.background
@@ -95,25 +103,17 @@ class BrowserActivity : AppCompatActivity() {
         insetsController?.isAppearanceLightNavigationBars = AppColors.getLuminance(window.navigationBarColor) > 127
         insetsController?.isAppearanceLightStatusBars = AppColors.getLuminance(window.statusBarColor) > 127
 
+        inflateInputField()
+        inflateButtons()
 
-        // TODO: Create ColorHook, hook views to their respective colors, so hooks update views on color change
-
-        homeButton = binding.homepageBtn
-        menuButton = binding.menuBtn
-        uriField = binding.uriField
-        infoBar = binding.informationBar
+        homeButton = buttonsBar.findViewById(R.id.btn_homepage)
+        moreButton = buttonsBar.findViewById(R.id.btn_more)
+        prevButton = buttonsBar.findViewById(R.id.btn_history_back)
+        uriField = inputBar.findViewById(R.id.input_field)
         contentRV = binding.contentRecyclerView
-        binding.uriSegmentsContainer.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            (binding.uriSegmentsContainer.parent as HorizontalScrollView).fullScroll(View.FOCUS_RIGHT)
-        }
-
-        infoBar.visibility = View.INVISIBLE
-        infoBar.isFocusableInTouchMode = true
-        infoBar.setOnFocusChangeListener { _, _ ->
-            if (!infoBar.hasFocus()) hideInfoBar()
-        } // TODO: Fix
 
         homeButton.setOnClickListener{ ContentManager.requestUri(Uri.parse(homepage)) }
+        prevButton.setOnClickListener{ ContentManager.loadPreviousPage() }
 
         uriField.setOnKeyListener (
             fun(_: View, k: Int, e: KeyEvent): Boolean {
@@ -139,6 +139,7 @@ class BrowserActivity : AppCompatActivity() {
             ContentManager.requestUri(Uri.parse(homepage)) // TODO: Customization - homepage
         else {
             updateContent(null)
+            updateTitle()
         }
     }
 
@@ -169,56 +170,39 @@ class BrowserActivity : AppCompatActivity() {
     }
 
     val tempHandleNonSuccess = fun(code: String, meta: String, uri: Uri) { // TODO: Replace
-        Thread {
-            run {
-                showInfoBar("Error code: $code", meta)
-                Thread.sleep(5000)
-                hideInfoBar()
-            }
-        }.start()
-    }
-
-    fun showInfoBar(title: String, message: String? = "") {
+        val message = if (meta.isNotBlank()) "Error $code: ${meta.trim()}" else "Error $code"
         runOnUiThread {
-            infoBar.findViewById<TextView>(R.id.information_title).text = title
-            val desc = infoBar.findViewById<TextView>(R.id.information_desc)
-            if (message?.isNotBlank() == true) {
-                desc.visibility = View.VISIBLE
-                desc.text = message
-            } else {
-                desc.visibility = View.GONE
-                desc.text = ""
-            }
-            infoBar.requestFocus()
-            if(infoBar.visibility == View.INVISIBLE){
-                infoBar.visibility = View.VISIBLE
-                val animate = TranslateAnimation(
-                    0f,
-                    0f,
-                    -infoBar.height.toFloat(),
-                    0f
-                )
-                animate.duration = 500
-                animate.fillAfter = true
-                infoBar.startAnimation(animate)
-            }
+            Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(styles.colors.backgroundSnackbar)
+                .setTextColor(styles.colors.textSnackbar)
+                .setAnchorView(binding.bottomBar)
+                .show()
         }
     }
 
-    fun hideInfoBar() {
-        if(infoBar.visibility == View.INVISIBLE) return
+    fun inflateButtons(){
+        val bbBinding = DataBindingUtil.inflate<BottomButtonsBarBinding>(
+            layoutInflater,
+            R.layout.bottom_buttons_bar,
+            binding.bottomBarButtonsFrame,
+            true)
+        buttonsBar = bbBinding.root as LinearLayoutCompat
+        bbBinding.palette = styles.colors
+    }
 
-        infoBar.visibility = View.INVISIBLE
-        val animate = TranslateAnimation(
-            0f,
-            0f,
-            0f,
-            -infoBar.height.toFloat()
-        )
-        animate.duration = 500
-        animate.fillAfter = true
-        infoBar.clearFocus()
-        infoBar.startAnimation(animate)
+    fun inflateInputField(){
+        val ibBinding = DataBindingUtil.inflate<BottomInputFieldBinding>(
+            layoutInflater,
+            R.layout.bottom_input_field,
+            binding.inputFieldFrame,
+            true)
+        inputBar = ibBinding.root as FrameLayout
+        ibBinding.palette = styles.colors
+    }
+
+    fun updateTitle() {
+        binding.bottomBarTitle.text =
+            ContentManager.currentTab.currentPage.run { "$favicon ${getTitle()}" }
     }
 
     fun handleInput(title: String = "", toUri: Uri, sensitive: Boolean = false) { // TODO: Remove all hardcoded strings
@@ -226,18 +210,41 @@ class BrowserActivity : AppCompatActivity() {
             val layout = layoutInflater.inflate(R.layout.dialog_input, null)
             layout.findViewById<TextView>(R.id.dialog_input_server_name).text =
                 getString(R.string.dialog_input_server_name, toUri.host)
+            layout.background = ContextCompat.getDrawable(this, R.drawable.bg_popup_rounded)?.also{
+                DrawableCompat.setTint(it, styles.colors.background)
+            }
+            (layout as ViewGroup).children.forEach {
+                when (it) {
+                    is Button -> it.setTextColor(styles.colors.accent)
+                    is TextView -> it.setTextColor(styles.colors.defaultText)
+                }
+            }
+            layout.findViewById<TextView>(R.id.dialog_input_title).text =
+                if (title.isNotBlank()) title else getString(R.string.dialog_input_title)
             val input = layout.findViewById<EditText>(R.id.dialog_input_field)
             if (sensitive) input.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-            AlertDialog.Builder(this, R.style.Theme_GemBrowser_AlertDialog)
-                .setTitle(if (title.isNotBlank()) title else getString(R.string.dialog_input_title))
+
+            val dialog = AlertDialog.Builder(this, R.style.Theme_GemBrowser_AlertDialog)
                 .setView(layout)
-                .setPositiveButton(getString(R.string.dialog_input_submit)) { _, _ ->
-                    ContentManager.requestUri(Uri.parse(toUri.toString() + "?" + Uri.encode(input.text.toString())))
-                }
-                .setNegativeButton(getString(R.string.general_cancel)) { _, _ -> }
                 .show()
-            Log.d("BrowserActivity", "Handling Input")
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            layout.findViewById<Button>(R.id.dialog_input_btn_send).run {
+                text = resources.getString(R.string.dialog_input_submit)
+                setOnClickListener {
+                    ContentManager.requestUri(Uri.parse(toUri.toString() + "?" + Uri.encode(input.text.toString())))
+                    dialog.cancel()
+                }
+                setTextColor(styles.colors.accent)
+            }
+            layout.findViewById<Button>(R.id.dialog_input_btn_cancel).run {
+                text = resources.getString(R.string.general_cancel)
+                setOnClickListener {
+                    dialog.cancel()
+                }
+                setTextColor(styles.colors.accent)
+            }
+            // Log.d("BrowserActivity", "Handling Input")
         }
     }
 
@@ -245,50 +252,12 @@ class BrowserActivity : AppCompatActivity() {
         runOnUiThread {
             if (lines != null)
                 contentRV.adapter = ContentAdapter(this, lines)
-            assembleUriButtons(ContentManager.currentTab.currentPage.uri)
+            //assembleUriButtons(ContentManager.currentTab.currentPage.uri)
+            updateTitle()
             uriField.setText(ContentManager.currentTab.currentPage.uri.toString())
             uriField.clearFocus()
-        }
-    }
-
-    // TODO: Rework Uri building in other classes
-    fun assembleUriButtons(uri: Uri) {
-        val current = binding.uriCurrent
-        val segmentsContainer = binding.uriSegmentsContainer
-        segmentsContainer.removeAllViews()
-        val newUri = uri.buildUpon().path("").query("")
-
-        current.text = if (uri.pathSegments.size > 0) uri.lastPathSegment else uri.host
-        val btnUriFirst = newUri.build()
-
-        val btnLayoutFirst = layoutInflater.inflate(R.layout.button_uri_segment, null)
-        btnLayoutFirst.clipToOutline = true
-        val btnFirst = btnLayoutFirst.findViewById<Button>(R.id.uri_segment_btn)
-        btnFirst.text = (uri.host ?: "...") + if (uri.pathSegments.size > 0) " ›" else ""
-        btnFirst.setTextColor(styles.colors.textBottomSegments)
-        btnFirst.setOnClickListener { ContentManager.requestUri(btnUriFirst) }
-
-        segmentsContainer.addView(btnLayoutFirst)
-
-        uri.pathSegments.forEachIndexed{
-                i: Int, s: String ->
-
-            newUri.appendPath(s)
-            val btnUri = newUri.build()
-
-            val btnLayout = layoutInflater.inflate(R.layout.button_uri_segment, null)
-            btnLayout.clipToOutline = true
-            val btn = btnLayout.findViewById<Button>(R.id.uri_segment_btn)
-            btn.setTextColor(styles.colors.textBottomSegments)
-            if(i < uri.pathSegments.size - 1) {
-                btn.text = "$s ›"
-                btn.setOnClickListener { ContentManager.requestUri(btnUri) }
-            } else {
-                btn.text = s
-                btn.isEnabled = false
-            }
-
-            segmentsContainer.addView(btnLayout)
+            prevButton.isEnabled = ContentManager.currentTab.backSize > 0
+            prevButton.alpha = if (prevButton.isEnabled) 1f else 0.5f
         }
     }
 }
