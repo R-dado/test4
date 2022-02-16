@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.data.theming
+package com.sermah.gembrowser.model.theming
 
 import android.content.res.AssetManager
 import android.graphics.Typeface

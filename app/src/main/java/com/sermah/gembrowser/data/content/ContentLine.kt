@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.model.content
+package com.sermah.gembrowser.data.content
 
 data class ContentLine(
     val data: String,

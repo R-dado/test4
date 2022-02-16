@@ -1,10 +1,10 @@
-package com.sermah.gembrowser.data.theming
+package com.sermah.gembrowser.model.theming
 
 import android.content.Context
-import com.sermah.gembrowser.data.storage.SimpleDataStorage
-import com.sermah.gembrowser.model.theming.AppColors
-import com.sermah.gembrowser.model.theming.AppStyles
-import com.sermah.gembrowser.model.theming.LineStyle
+import com.sermah.gembrowser.model.storage.SimpleDataStorage
+import com.sermah.gembrowser.data.theming.AppColors
+import com.sermah.gembrowser.data.theming.AppStyles
+import com.sermah.gembrowser.data.theming.LineStyle
 
 object StyleManager {
     val defaultLightStyles = AppStyles(AppColors())

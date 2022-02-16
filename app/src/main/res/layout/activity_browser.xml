@@ -6,7 +6,7 @@
     <data>
         <variable
             name="palette"
-            type="com.sermah.gembrowser.model.theming.AppColors" />
+            type="com.sermah.gembrowser.data.theming.AppColors" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

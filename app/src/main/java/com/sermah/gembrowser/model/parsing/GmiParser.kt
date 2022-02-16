@@ -1,9 +1,9 @@
-package com.sermah.gembrowser.data.parsing
+package com.sermah.gembrowser.model.parsing
 
 import android.net.Uri
 import com.sermah.gembrowser.util.UriTools.addRelative
-import com.sermah.gembrowser.model.content.ContentLine
-import com.sermah.gembrowser.model.content.ContentLine.ContentType.*
+import com.sermah.gembrowser.data.content.ContentLine
+import com.sermah.gembrowser.data.content.ContentLine.ContentType.*
 
 object GmiParser {
     fun parse(gmi: String, absUri: Uri): List<ContentLine> {

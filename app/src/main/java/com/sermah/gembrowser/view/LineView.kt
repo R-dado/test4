@@ -8,10 +8,10 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 import com.sermah.gembrowser.R
-import com.sermah.gembrowser.data.content.ContentManager
-import com.sermah.gembrowser.data.theming.StyleManager.dpToPx
-import com.sermah.gembrowser.model.content.ContentLine
-import com.sermah.gembrowser.model.theming.LineStyle
+import com.sermah.gembrowser.model.content.ContentManager
+import com.sermah.gembrowser.model.theming.StyleManager.dpToPx
+import com.sermah.gembrowser.data.content.ContentLine
+import com.sermah.gembrowser.data.theming.LineStyle
 
 import android.content.ClipData
 import android.content.ClipboardManager

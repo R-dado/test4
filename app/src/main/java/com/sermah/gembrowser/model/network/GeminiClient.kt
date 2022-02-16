@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.data.network
+package com.sermah.gembrowser.model.network
 
 import android.net.Uri
 import android.util.Log

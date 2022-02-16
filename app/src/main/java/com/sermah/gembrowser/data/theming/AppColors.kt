@@ -1,7 +1,6 @@
-package com.sermah.gembrowser.model.theming
+package com.sermah.gembrowser.data.theming
 
 import android.graphics.Color
-import android.util.Log
 import androidx.core.math.MathUtils
 import kotlin.math.roundToInt
 

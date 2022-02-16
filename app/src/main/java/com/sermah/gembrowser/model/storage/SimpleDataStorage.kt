@@ -1,4 +1,4 @@
-package com.sermah.gembrowser.data.storage
+package com.sermah.gembrowser.model.storage
 
 import android.content.Context
 import android.content.res.AssetManager

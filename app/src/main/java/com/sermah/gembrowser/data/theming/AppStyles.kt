@@ -1,7 +1,6 @@
-package com.sermah.gembrowser.model.theming
+package com.sermah.gembrowser.data.theming
 
 import android.graphics.Typeface
-import android.util.Log
 
 data class AppStyles(
     var colors          : AppColors = AppColors(),
