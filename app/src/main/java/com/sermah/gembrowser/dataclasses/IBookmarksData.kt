@@ -2,7 +2,7 @@ package com.sermah.gembrowser.dataclasses
 
 interface IBookmarksData {
 
-    val entries: Collection<IBookmark>
+    val entries: List<IBookmark>
 
     fun isBookmark(uri: String): Boolean
 

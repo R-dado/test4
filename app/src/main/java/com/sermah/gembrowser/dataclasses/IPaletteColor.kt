@@ -1,7 +1,7 @@
 package com.sermah.gembrowser.dataclasses
 
-interface IStyleColor {
+interface IPaletteColor {
 
-    val color : Int
+    val value : Int
 
 }

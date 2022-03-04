@@ -2,7 +2,7 @@ package com.sermah.gembrowser.dataclasses
 
 interface IHistoryData {
 
-    val entries: Collection<IHistoryEntry>
+    val entries: List<IHistoryEntry>
     val current: IHistoryEntry
 
     val canForward: Boolean

@@ -2,6 +2,6 @@ package com.sermah.gembrowser.dataclasses
 
 interface IContentsData {
 
-    val entries : Collection<IContentsData>
+    val entries : List<IContentsData>
 
 }
