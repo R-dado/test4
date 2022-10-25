@@ -46,7 +46,10 @@ The Gemini protocol feature-rich* browser for Android.
   - Server certificate management
   - Client certificate management
 
-## Seems interesting to be added
-- Displaying popular images formats
-- Parsing Markdown (but without sideload stuff like images)
-- Parsing Gopher markup
+## Screenshots
+
+<span>
+<img src="readme_assets/geminibrowser_main.png" width=200>
+<img src="readme_assets/geminibrowser_other.png" width=200>
+<img src="readme_assets/geminibrowser_keyboard.png" width=200>
+</span>
